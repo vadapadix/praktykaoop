@@ -11,6 +11,23 @@ namespace WinFormsApp1
         public Form1()
         {
             InitializeComponent();
+            KeyPreview = true;
+            KeyDown += Form1_KeyDown;
+            UpdateDisplayColor();
+        }
+
+        private void Form1_KeyDown(object? sender, KeyEventArgs e)
+        {
+            if (e.KeyCode >= Keys.D0 && e.KeyCode <= Keys.D9)
+            {
+                NumberClick((e.KeyCode - Keys.D0).ToString());
+                e.Handled = true;
+            }
+            else if (e.KeyCode >= Keys.NumPad0 && e.KeyCode <= Keys.NumPad9)
+            {
+                NumberClick((e.KeyCode - Keys.NumPad0).ToString());
+                e.Handled = true;
+            }
         }
 
         private void NumberClick(string number)
@@ -102,7 +119,12 @@ namespace WinFormsApp1
 
         private void btnCE_Click(object sender, EventArgs e)
         {
-            ClearCalculator();
+            using ConfirmClearForm confirm = new ConfirmClearForm();
+
+            if (confirm.ShowDialog(this) == DialogResult.Yes)
+            {
+                ClearCalculator();
+            }
         }
 
         private void ClearCalculator()
@@ -111,6 +133,56 @@ namespace WinFormsApp1
             firstNumber = 0;
             operation = "";
             isOperationSelected = false;
+        }
+
+        private void radioOn_CheckedChanged(object sender, EventArgs e)
+        {
+            if (radioOn.Checked)
+            {
+                SetCalculatorEnabled(true);
+                KeyPreview = true;
+            }
+        }
+
+        private void radioOff_CheckedChanged(object sender, EventArgs e)
+        {
+            if (radioOff.Checked)
+            {
+                SetCalculatorEnabled(false);
+                KeyPreview = false;
+                ClearCalculator();
+            }
+        }
+
+        private void SetCalculatorEnabled(bool enabled)
+        {
+            foreach (Control control in tlpButtonsPanel.Controls)
+            {
+                control.Enabled = enabled;
+            }
+        }
+
+        private void lblDisplay_TextChanged(object sender, EventArgs e)
+        {
+            UpdateDisplayColor();
+        }
+
+        private void UpdateDisplayColor()
+        {
+            int length = lblDisplay.Text.Length;
+
+            if (length <= 3)
+            {
+                lblDisplay.ForeColor = Color.Black;
+            }
+            else if (length <= 8)
+            {
+                lblDisplay.ForeColor = Color.DarkGreen;
+            }
+            else
+            {
+                lblDisplay.ForeColor = Color.DarkRed;
+            }
         }
 
         private void btn7_Click(object sender, EventArgs e)

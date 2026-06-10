@@ -11,9 +11,25 @@ namespace WinFormsApp1
         public Form1()
         {
             InitializeComponent();
+            KeyPreview = true;
+            KeyDown += Form1_KeyDown;
         }
 
-        private void NumberClick(string number)
+        private void Form1_KeyDown(object? sender, KeyEventArgs e)
+        {
+            if (e.KeyCode >= Keys.D0 && e.KeyCode <= Keys.D9)
+            {
+                NumberClick((e.KeyCode - Keys.D0).ToString());
+                e.Handled = true;
+            }
+            else if (e.KeyCode >= Keys.NumPad0 && e.KeyCode <= Keys.NumPad9)
+            {
+                NumberClick((e.KeyCode - Keys.NumPad0).ToString());
+                e.Handled = true;
+            }
+        }
+
+        private void NumberClick(string number) 
         {
             if (lblDisplay.Text == "0" || isOperationSelected)
             {
